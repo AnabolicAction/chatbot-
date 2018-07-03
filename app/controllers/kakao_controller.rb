@@ -1,3 +1,4 @@
+require 'parse'
 class KakaoController < ApplicationController
   def keyboard
    @keyboard = {
@@ -10,18 +11,14 @@ class KakaoController < ApplicationController
   end
   
   def message 
-    @user_msg = params[:content]
-    @text = "기본응답"
+      @user_msg = params[:content]
+      @text = "기본응답"
     if @user_msg =="다이어트메뉴"
-      @text =["락스","생강","똠양꿍","칫솔","다마내기","생마늘","건빵","독버섯","농약","쥐약","물수제비"].sample
+       @text =["락스","생강","똠양꿍","칫솔","다마내기","생마늘","건빵","독버섯","농약","쥐약","물수제비"].sample
     elsif @user_msg=="로또번호"
-    @text =(1..45).to_a.sample(6).sort.to_s
-    elsif @user_msg=="맹수"
-    @url = "http://thecatapi.com/api/images/get?format=xml&type=jpg"
-    @cat_xml = RestClient.get(@url)
-    @cat_doc = Nokogiri::XML(@cat_xml)
-    @cat_url= @cat_doc.xpath('//url').text
-    @text =@cat_url
+       @text =(1..45).to_a.sample(6).sort.to_s
+    elsif @user_msg == "맹수"
+          @cat_url = Parse::Animal.cat
     end
     
     @return_msg = {
@@ -55,5 +52,22 @@ class KakaoController < ApplicationController
   
     
     render json: @result
+  end
+  
+  def friend_add
+    #유저가 치구추가했을때 추가하는코드
+    User.create(user_key: params[:user_key], chat_room: 0) 
+    render json: true
+  end
+  
+  def friend_delete
+    User.find_by(user_key: params[:user_key]).destroy
+    render nothing: true
+  end
+  def chat_room
+    user=User.find_by(user_key: params[:user_key])
+    user.plus
+    user.save
+    render nothing: true
   end
 end

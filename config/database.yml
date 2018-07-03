@@ -9,11 +9,9 @@ default: &default
   pool: 5
   timeout: 5000
 
-
-  # 변경전
-# production:
-#   <<: *default
-#   database: db/production.sqlite3
+development:
+  <<: *default
+  database: db/development.sqlite3
 
 # 변경후  
 production:
@@ -27,7 +25,3 @@ production:
 test:
   <<: *default
   database: db/test.sqlite3
-
-production:
-  <<: *default
-  database: db/production.sqlite3
